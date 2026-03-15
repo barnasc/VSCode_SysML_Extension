@@ -26,6 +26,9 @@ schemas/**
 samples/**
 docs/**
 test-output/**
+coverage/**
+tmp/**
+temp/**
 assets/**
 Makefile
 eslint.config.js
