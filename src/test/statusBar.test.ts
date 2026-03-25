@@ -254,7 +254,7 @@ suite('StatusBar', () => {
         updateModelMetrics(stats, uri);
         const cached = getCachedMetrics(uri.toString());
         assert.ok(cached, 'should have cached metrics');
-        assert.strictEqual(cached!.totalElements, 99);
+        assert.strictEqual(cached?.totalElements, 99);
     });
 
     test('deleteCachedMetrics removes entry', () => {
@@ -270,8 +270,8 @@ suite('StatusBar', () => {
         updateModelMetrics(stats, uri);
         const args = getLastMetricsArgs();
         assert.ok(args);
-        assert.strictEqual(args!.stats.totalElements, 55);
-        assert.strictEqual(args!.uri?.toString(), uri.toString());
+        assert.strictEqual(args?.stats.totalElements, 55);
+        assert.strictEqual(args?.uri?.toString(), uri.toString());
     });
 
     // ── hideModelMetrics ────────────────────────────────────────
