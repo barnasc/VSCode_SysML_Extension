@@ -145,10 +145,16 @@ jobs:
         if: env.VSCODE_MARKETPLACE_TOKEN != ''
         env:
           VSCODE_MARKETPLACE_TOKEN: ${{ secrets.VSCODE_MARKETPLACE_TOKEN }}
-        run: npx vsce publish --packagePath "sysml-v2-support-${{ steps.version.outputs.version }}.vsix" --pat "$VSCODE_MARKETPLACE_TOKEN"
+        run: |
+          npx vsce publish --packagePath "sysml-v2-support-${{ steps.version.outputs.version }}.vsix" --pat "$VSCODE_MARKETPLACE_TOKEN" || {
+            echo "::warning::Marketplace publish failed (version may already exist)"
+          }
 
       - name: Publish to Open VSX Registry
         if: env.OVSX_TOKEN != ''
         env:
           OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
-        run: npx ovsx publish "sysml-v2-support-${{ steps.version.outputs.version }}.vsix" -p "$OVSX_TOKEN"
+        run: |
+          npx ovsx publish "sysml-v2-support-${{ steps.version.outputs.version }}.vsix" -p "$OVSX_TOKEN" || {
+            echo "::warning::Open VSX publish failed (version may already exist)"
+          }
