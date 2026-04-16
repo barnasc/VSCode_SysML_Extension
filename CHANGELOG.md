@@ -5,6 +5,37 @@ All notable changes to the SysML v2.0 Language Support extension will be documen
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.33.0]
+
+### Added
+
+- **LSP model caching** — `LspModelProvider` now caches results by URI, avoiding redundant LSP requests when multiple consumers (model explorer, visualization, feature inspector, dashboard) query the same file
+- **Consolidated file-change notifications** — save, edit, and file-system-watcher events are debounced into a single 300ms notification per URI, eliminating up to 3 redundant panel refreshes per save
+- **Parallel workspace loading** — model explorer loads files in chunks of 4 concurrently instead of sequentially, improving workspace load times
+- **Dependabot configuration** — automated dependency updates for npm and GitHub Actions with grouped minor/patch PRs
+- **`npm audit` in CI** — lint job now runs `npm audit --audit-level=high` to catch known vulnerabilities
+- **LSP dependency management scripts** — `lsp:local`, `lsp:npm`, and `lsp:which` scripts for switching between local and npm LSP versions
+
+### Changed
+
+- Updated `sysml-v2-lsp` dependency from 0.12.0 to 0.13.0 — batch parsing bug fixes (DFA pre-seed retry, error listener ordering, SLL error collection)
+- Upgraded `typescript` from 5.x to 6.0.2
+- Upgraded `eslint` from 9.x to 10.2.0 and `@eslint/js` to 10.0.1
+- Upgraded `@types/node` from 24.x to 25.6.0 and `@types/vscode` to 1.116.0
+- Upgraded `cytoscape` to 3.33.2 and `@vscode/vsce` to 3.9.0
+- Unit tests now run compiled `.js` output instead of using `ts-node`, fixing compatibility with Node 22+ ESM resolution
+- Release workflow restricted to `main` branch and version tags only
+
+### Fixed
+
+- **Unit test failures on Node 22** — replaced CJS `Module._resolveFilename` vscode mock hook with a plain `.cjs` require hook that works with Node 22's ESM module resolution
+- **Release workflow running on non-main branches** — added branch guard (`main` and `v*` tags only)
+- **CI YAML syntax errors** — converted inline `node -e` scripts to YAML block scalars to avoid nested quote issues
+
+### Removed
+
+- Deprecated `downlevelIteration` option from `tsconfig.json` (unnecessary with ES2022 target, deprecated in TypeScript 6)
+
 ## [0.32.0]
 
 ### Changed
