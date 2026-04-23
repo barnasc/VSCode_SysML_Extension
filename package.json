@@ -467,12 +467,6 @@
     "package": "vsce package --allow-missing-repository",
     "package:install": "npm run package && code --install-extension sysml-v2-support-$(node -p \"require('./package.json').version\").vsix",
     "clean": "rimraf out",
-    "version:patch": "npm version patch --no-git-tag-version",
-    "version:minor": "npm version minor --no-git-tag-version",
-    "version:major": "npm version major --no-git-tag-version",
-    "release:patch": "npm run version:patch && git add package.json && git commit -m \"chore: bump version to $(node -p \\\"require('./package.json').version\\\")\" && git tag v$(node -p \"require('./package.json').version\")",
-    "release:minor": "npm run version:minor && git add package.json && git commit -m \"chore: bump version to $(node -p \\\"require('./package.json').version\\\")\" && git tag v$(node -p \"require('./package.json').version\")",
-    "release:major": "npm run version:major && git add package.json && git commit -m \"chore: bump version to $(node -p \\\"require('./package.json').version\\\")\" && git tag v$(node -p \"require('./package.json').version\")",
     "lsp:local": "cd ../sysml-v2-lsp && npm run clean && npm run package:server && cd ../VSCode_SysML_Extension && npm install ../sysml-v2-lsp/sysml-v2-lsp-$(node -p \"require('../sysml-v2-lsp/package.json').version\").tgz --save-exact && npm run compile",
     "lsp:npm": "npm install sysml-v2-lsp@$(node -p \"require('../sysml-v2-lsp/package.json').version\") --save-exact && npm run compile",
     "lsp:which": "node -e \"const p=require('./package.json').dependencies['sysml-v2-lsp']; console.log(p.startsWith('file:') ? 'local: '+p : 'npm: '+p)\""
@@ -485,7 +479,7 @@
     "@typescript-eslint/eslint-plugin": "^8.58.2",
     "@typescript-eslint/parser": "^8.58.2",
     "@vscode/test-electron": "^2.4.1",
-    "@vscode/vsce": "^3.9.0",
+    "@vscode/vsce": "^2.25.0",
     "c8": "^11.0.0",
     "cytoscape": "^3.33.2",
     "cytoscape-elk": "^2.3.0",
@@ -500,7 +494,7 @@
   },
   "dependencies": {
     "elkjs": "^0.11.0",
-    "sysml-v2-lsp": "0.16.0",
+    "sysml-v2-lsp": "0.17.0",
     "vscode-languageclient": "^9.0.1"
   },
   "overrides": {

@@ -5,6 +5,24 @@ All notable changes to the SysML v2.0 Language Support extension will be documen
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Prepare Release workflow** — `prepare-release.yml` automates version bumping, CHANGELOG stamping, and tag creation via GitHub Actions `workflow_dispatch`
+- **Composite setup action** — `.github/actions/setup/action.yml` centralises Node.js setup, LSP dependency switching, and `npm install` across all workflows
+
+### Changed
+
+- Refactored `ci.yml` and `release.yml` to use the composite setup action, eliminating repeated boilerplate
+- Updated `RELEASE_CHECKLIST.md` to reference the new prepare-release workflow
+- Removed manual `version:*` and `release:*` npm scripts (superseded by prepare-release workflow)
+
+### Fixed
+
+- **"Go to References" missing anonymous interface usages** ([#34](https://github.com/daltskin/VSCode_SysML_Extension/issues/34)) — downstream LSP now indexes anonymous typed interface usages (e.g. `port pwrOut : ~PwrHeaterIface`) in the symbol table
+- **False parse errors from stale DFA states** — downstream LSP retry logic now correctly detects and clears stale DFA states instead of checking pre-seed status
+
 ## [0.35.0]
 
 ### Fixed

@@ -3,15 +3,6 @@ name: Release
 on:
   push:
     tags: [ 'v*' ]
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Version to release (e.g. 0.28.0)'
-        required: true
-        type: string
-
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 permissions:
   contents: write
@@ -23,35 +14,11 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '22.x'
-          cache: npm
-
-      - name: Ensure npm LSP dependency
-        run: |
-          node -e "
-            const p=require('./package.json');
-            const v=p.dependencies['sysml-v2-lsp'];
-            if(v.startsWith('file:')) {
-              const m=v.match(/\d+\.\d+\.\d+/);
-              console.log('Switching local LSP to npm@'+m[0]);
-              const fs=require('fs');
-              p.dependencies['sysml-v2-lsp']=m[0];
-              fs.writeFileSync('package.json', JSON.stringify(p,null,2)+'\n');
-            } else {
-              console.log('Already using npm: '+v);
-            }
-          "
-
-      - name: Install dependencies
-        run: npm install
+      - name: Setup
+        uses: ./.github/actions/setup
 
       - name: Lint
         run: npx eslint src/
@@ -67,59 +34,32 @@ jobs:
     needs: [test]
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '22.x'
-          cache: npm
+      - name: Setup
+        uses: ./.github/actions/setup
 
-      - name: Ensure npm LSP dependency
-        run: |
-          node -e "
-            const p=require('./package.json');
-            const v=p.dependencies['sysml-v2-lsp'];
-            if(v.startsWith('file:')) {
-              const m=v.match(/\d+\.\d+\.\d+/);
-              console.log('Switching local LSP to npm@'+m[0]);
-              const fs=require('fs');
-              p.dependencies['sysml-v2-lsp']=m[0];
-              fs.writeFileSync('package.json', JSON.stringify(p,null,2)+'\n');
-            } else {
-              console.log('Already using npm: '+v);
-            }
-          "
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Get version from tag
+      - name: Extract version from tag
         id: version
-        run: |
-          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
-            echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
-          elif [[ -n "${{ inputs.version }}" ]]; then
-            echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT
-          else
-            echo "::error::No version found. Push a tag (v*) or provide a version input."
-            exit 1
-          fi
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
 
       - name: Set package.json version
-        run: npm pkg set version=${{ steps.version.outputs.version }}
+        run: |
+          CURRENT=$(node -p "require('./package.json').version")
+          if [ "$CURRENT" != "${{ steps.version.outputs.VERSION }}" ]; then
+            npm version "${{ steps.version.outputs.VERSION }}" --no-git-tag-version
+          fi
 
       - name: Package VSIX
         run: npm run package
 
       - name: Verify VSIX version
-        run: test -f "sysml-v2-support-${{ steps.version.outputs.version }}.vsix"
+        run: test -f "sysml-v2-support-${{ steps.version.outputs.VERSION }}.vsix"
 
       - name: Extract release notes from CHANGELOG.md
         id: changelog
         run: |
-          VERSION="${{ steps.version.outputs.version }}"
+          VERSION="${{ steps.version.outputs.VERSION }}"
           # Extract the section for this version from CHANGELOG.md
           # Matches from "## [<version>]" up to the next "## [" heading or end of file
           NOTES=$(awk -v ver="$VERSION" '
@@ -146,17 +86,17 @@ jobs:
       - name: Delete existing release (if any)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release delete "v${{ steps.version.outputs.version }}" --yes || true
+        run: gh release delete "v${{ steps.version.outputs.VERSION }}" --yes || true
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ steps.version.outputs.version }}
-          name: Release ${{ steps.version.outputs.version }}
+          tag_name: v${{ steps.version.outputs.VERSION }}
+          name: Release ${{ steps.version.outputs.VERSION }}
           body: |
-            ## SysML v2.0 Extension v${{ steps.version.outputs.version }}
+            ## SysML v2.0 Extension v${{ steps.version.outputs.VERSION }}
 
             ${{ steps.changelog.outputs.notes }}
 
@@ -165,21 +105,21 @@ jobs:
             ### Installation
             Download the `.vsix` file and install using:
             ```bash
-            code --install-extension sysml-v2-support-${{ steps.version.outputs.version }}.vsix
+            code --install-extension sysml-v2-support-${{ steps.version.outputs.VERSION }}.vsix
             ```
 
             Or install directly from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=JamieD.sysml-v2-support) or [Open VSX Registry](https://open-vsx.org/extension/JamieD/sysml-v2-support).
           files: |
             *.vsix
           draft: false
-          prerelease: ${{ contains(steps.version.outputs.version, '-') }}
+          prerelease: ${{ contains(steps.version.outputs.VERSION, '-') }}
 
       - name: Publish to VS Code Marketplace
         if: env.VSCODE_MARKETPLACE_TOKEN != ''
         env:
           VSCODE_MARKETPLACE_TOKEN: ${{ secrets.VSCODE_MARKETPLACE_TOKEN }}
         run: |
-          npx vsce publish --packagePath "sysml-v2-support-${{ steps.version.outputs.version }}.vsix" --pat "$VSCODE_MARKETPLACE_TOKEN" || {
+          npx vsce publish --packagePath "sysml-v2-support-${{ steps.version.outputs.VERSION }}.vsix" --pat "$VSCODE_MARKETPLACE_TOKEN" || {
             echo "::warning::Marketplace publish failed (version may already exist)"
           }
 
@@ -188,6 +128,6 @@ jobs:
         env:
           OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
         run: |
-          npx ovsx publish "sysml-v2-support-${{ steps.version.outputs.version }}.vsix" -p "$OVSX_TOKEN" || {
+          npx ovsx publish "sysml-v2-support-${{ steps.version.outputs.VERSION }}.vsix" -p "$OVSX_TOKEN" || {
             echo "::warning::Open VSX publish failed (version may already exist)"
           }

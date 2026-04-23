@@ -1,32 +1,36 @@
 # Release Checklist
 
-Use this template when preparing a new release.
+## Before Release
 
-## Before Tagging
-
-1. Update `CHANGELOG.md`:
-   - Move items from `[Unreleased]` into a new `## [x.y.z]` section
+1. Ensure `CHANGELOG.md` has entries under `## [Unreleased]`
    - Use subsections: `### Added`, `### Changed`, `### Deprecated`, `### Removed`, `### Fixed`, `### Security`
-2. Ensure all tests pass: `npm test`
-3. Verify extension compiles: `npm run compile`
-4. Test packaging locally: `npm run package`
+2. Ensure CI is green on `main`
 
 ## Creating the Release
 
-```bash
-git tag v0.15.0
-git push origin v0.15.0
-```
+1. Go to **Actions → Prepare Release** → **Run workflow**
+2. Select the branch to release from (usually `main`)
+3. Enter the version (e.g. `0.36.0`) — no `v` prefix
+4. Optionally tick **Dry run** to validate without pushing
+5. Click **Run workflow**
 
-The [release workflow](../workflows/release.yml) will automatically:
+The [prepare-release workflow](../workflows/prepare-release.yml) will:
+
+- Validate the version format and check the tag doesn't exist
+- Run `npm run compile` and `npm run test:unit`
+- Bump `package.json` version
+- Stamp `CHANGELOG.md` (replace `[Unreleased]` with the version, add a fresh `[Unreleased]` section)
+- Commit, tag `v<version>`, and push
+
+The tag push then triggers the [release workflow](../workflows/release.yml), which will:
 
 - Build and package the VSIX
-- Extract release notes from `CHANGELOG.md` for the tagged version
+- Extract release notes from `CHANGELOG.md`
 - Create a GitHub Release with the notes and VSIX attached
-- Publish to the VS Code Marketplace (if token is configured)
+- Publish to the VS Code Marketplace and Open VSX (if tokens are configured)
 
 ## After Release
 
 - Verify the [GitHub Release](https://github.com/daltskin/VSCode_SysML_Extension/releases) looks correct
 - Confirm the VSIX is downloadable
-- Add a new `## [Unreleased]` section to `CHANGELOG.md` if not already present
+- Start adding entries under the new `## [Unreleased]` section in `CHANGELOG.md`
