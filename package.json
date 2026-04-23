@@ -479,7 +479,7 @@
     "@typescript-eslint/eslint-plugin": "^8.58.2",
     "@typescript-eslint/parser": "^8.58.2",
     "@vscode/test-electron": "^2.4.1",
-    "@vscode/vsce": "^2.25.0",
+    "@vscode/vsce": "^3.9.1",
     "c8": "^11.0.0",
     "cytoscape": "^3.33.2",
     "cytoscape-elk": "^2.3.0",
