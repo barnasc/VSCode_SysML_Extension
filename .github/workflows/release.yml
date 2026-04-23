@@ -21,7 +21,20 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - name: Resolve ref
+        id: ref
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            echo "REF=${GITHUB_REF}" >> "$GITHUB_OUTPUT"
+          elif [[ -n "${{ inputs.tag }}" ]]; then
+            echo "REF=refs/tags/${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "REF=${GITHUB_REF}" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ steps.ref.outputs.REF }}
 
       - name: Setup
         uses: ./.github/actions/setup
