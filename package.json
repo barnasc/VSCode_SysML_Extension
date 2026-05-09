@@ -11,7 +11,7 @@
     "url": "https://github.com/daltskin/VSCode_SysML_Extension.git"
   },
   "engines": {
-    "vscode": "^1.99.0"
+    "vscode": "^1.118.0"
   },
   "categories": [
     "Programming Languages",
