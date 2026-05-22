@@ -2,10 +2,15 @@
 
 ## [Unreleased]
 
-All notable changes to the SysML v2.0 Language Support extension will be documented in this file.
+### Added
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+- **Grid / Connection layout toggle for General and Interconnection Views** — new `▦ Grid` / `⇄ Connection` toolbar button switches the General View and Interconnection (IBD) View between the existing declaration-order grid layout and a connection-driven ELK layered layout. In Connection mode, related parts cluster together and edges/connectors route around boxes instead of crossing them. Falls back silently to the grid layout if ELK cannot lay out the graph.
+
+### Fixed
+
+- **General View — port label overlap between adjacent containers** — when parts expose ports, port name labels are drawn outside the container on the left and right edges. With the previous fixed 30px column spacing, long port names would overlap the neighbouring container. The General View layout now measures each port name's rendered width (per side, matching the alternating left/right placement), and widens column spacing and left-edge padding just enough that no label can collide with an adjacent container.
+
+- **Upgraded `sysml-v2-lsp` from 0.18.0 to 0.19.0** — inline with the latest 2026 04 OMG release
 
 ## [0.37.0]
 
