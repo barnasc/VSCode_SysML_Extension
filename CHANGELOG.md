@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.38.0]
+
 ### Added
 
 - **Grid / Connection layout toggle for General and Interconnection Views** — new `▦ Grid` / `⇄ Connection` toolbar button switches the General View and Interconnection (IBD) View between the existing declaration-order grid layout and a connection-driven ELK layered layout. In Connection mode, related parts cluster together and edges/connectors route around boxes instead of crossing them. Falls back silently to the grid layout if ELK cannot lay out the graph.
