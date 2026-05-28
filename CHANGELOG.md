@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.39.0]
+
 ### Fixed
 
 - **Sequence View — arrows not rendering for `part def` containers** ([#44](https://github.com/daltskin/VSCode_SysML_Extension/issues/44)) — sequence diagrams declared inside a `part def` (with `event occurrence` participants and `message` statements) now render their messages as arrows. Two-part fix:
