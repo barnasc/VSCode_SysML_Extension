@@ -84,9 +84,3 @@ jobs:
             git push origin "v${{ inputs.version }}"
             echo "✅ Pushed commit and tag v${{ inputs.version }}"
           fi
-
-      - name: Trigger release workflow
-        if: inputs.dry-run == false
-        env:
-          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-        run: gh workflow run release.yml -f tag="v${{ inputs.version }}"
