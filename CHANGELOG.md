@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.40.0]
+
 ### Added
 
 - **Web extension support (vscode.dev / github.dev)** — the extension now runs as a true browser web extension in addition to desktop, with no server-side container required:
