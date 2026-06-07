@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.41.0]
+
 ### Changed
 
 - **Upgraded `vscode-languageclient` 9 → 10** — adopted the new LSP client API. `LanguageClientOptions.outputChannel`/`traceOutputChannel` now require a `LogOutputChannel`, so the shared `SysML` channel is created with `{ log: true }` and typed accordingly across `extension.ts` and the LSP client factories.
