@@ -21,11 +21,14 @@ const CLIENT_NAME = 'SysML v2 Language Server';
 export function createLanguageClient(
     context: vscode.ExtensionContext,
     clientOptions: LanguageClientOptions,
-    outputChannel: vscode.OutputChannel,
+    outputChannel: vscode.LogOutputChannel,
 ): BaseLanguageClient {
     const serverUri = vscode.Uri.joinPath(context.extensionUri, 'dist', 'web', 'sysmlServer.js');
     outputChannel.appendLine(`Starting SysML v2 language server (Web Worker): ${serverUri.toString(true)}`);
 
     const worker = new Worker(serverUri.toString(true));
-    return new LanguageClient(CLIENT_ID, CLIENT_NAME, clientOptions, worker);
+    // vscode-languageclient v10 browser constructor signature is
+    // (id, name, serverOptions /* Worker */, clientOptions) — matching the
+    // Node variant. (v9 took clientOptions before the worker.)
+    return new LanguageClient(CLIENT_ID, CLIENT_NAME, worker, clientOptions);
 }
