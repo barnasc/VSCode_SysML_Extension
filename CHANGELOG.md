@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.42.0]
+
 ### Fixed
 
 - **State Transition View now renders transition edges** ([#60](https://github.com/daltskin/VSCode_SysML_Extension/issues/60)) — transition source/target (and the `accept` trigger as edge label) are recovered from the SysML source, covering inline and named/multi-line forms plus `then`-succession chains (`state idle; then state active;`). Undeclared transition targets are synthesized as nodes, and the `entry; then …` transition renders as an initial pseudostate (`[*] → firstState`).
