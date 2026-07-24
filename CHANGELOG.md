@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.43.0]
+
 ### Fixed
 
 - **`join` control node now renders as a synchronization bar, not a diamond** ([#62](https://github.com/daltskin/VSCode_SysML_Extension/issues/62)) — in the Action Flow view, `join` nodes were incorrectly drawn as decision/merge diamonds. The root cause was upstream: the language server did not emit control nodes as typed elements, so the extension fell back to name-based guessing that grouped `join` with `merge`. The Action Flow builder now uses the authoritative `fork`/`join`/`merge`/`decide` types provided by the language server, and the name-based synthesis fallback (used only for undeclared flow endpoints) no longer collapses `join` into `merge`.
