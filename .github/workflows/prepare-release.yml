@@ -50,7 +50,7 @@ jobs:
           npm run test:unit
 
       - name: Bump package.json version
-        run: npm version "${{ inputs.version }}" --no-git-tag-version
+        run: npm version "${{ inputs.version }}" --no-git-tag-version --allow-same-version
 
       - name: Stamp CHANGELOG.md version
         run: |
