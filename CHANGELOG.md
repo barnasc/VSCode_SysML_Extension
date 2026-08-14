@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.45.0]
+
 ### Changed
 
 - **Reduced production dependency surface** — moved `elkjs` to `devDependencies` (it is only a build-time source for the vendored `media/vendor/elk.bundled.js` bundle, consistent with `d3`/`cytoscape*`). Runtime production dependencies are now just `sysml-v2-lsp` and `vscode-languageclient`. Advisories in the vendored visualization libraries no longer require an extension release.
